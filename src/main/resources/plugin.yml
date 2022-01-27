@@ -1,0 +1,18 @@
+name: GitMcSync
+version: '${project.version}'
+main: konstanius.gitmcsync.GitMcSync
+api-version: 1.17
+load: STARTUP
+depend: [ BileTools ]
+authors: [ konstanius ]
+commands:
+  gitmerge:
+    description: "gitsync.merge"
+  gitpull:
+    description: "gitsync.merge"
+  gitupgrade:
+    description: "gitsync.merge"
+  gitmute:
+    description: "gitsync.mute"
+  gitexport:
+    description: "gitsync.export"
