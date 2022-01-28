@@ -47,10 +47,11 @@ public class CommandGitExport implements CommandExecutor {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 try {
-                    Files.walk(Path.of(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp"))
-                            .sorted(Comparator.reverseOrder())
-                            .map(Path::toFile)
-                            .forEach(File::delete);
+                    FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp"));
+//                    Files.walk(Path.of(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp"))
+//                            .sorted(Comparator.reverseOrder())
+//                            .map(Path::toFile)
+//                            .forEach(File::delete);
                     Files.createDirectory(Path.of(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp"));
                 } catch (Exception ignored) {}
                 File file = new File(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp");
@@ -67,6 +68,10 @@ public class CommandGitExport implements CommandExecutor {
                     e.printStackTrace();
                 }
                 FileUtils.copyDirectory(new File(path), new File(newPath));
+                try {
+                    FileUtils.deleteDirectory(new File(newPath + "/plugins/GitMcSync"));
+                }
+                catch(Exception ignored) {}
                 git.add().addFilepattern(".").call();
                 RevCommit result = git.commit().setMessage(getString("export-message").replace("%path%", args[0]).replace("%player%", sender.getName())).call();
                 git.push()

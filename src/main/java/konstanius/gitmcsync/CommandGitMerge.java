@@ -1,5 +1,6 @@
 package konstanius.gitmcsync;
 
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -150,15 +151,23 @@ public class CommandGitMerge implements CommandExecutor {
             e.printStackTrace();
         }
 
-        path = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git");
+//        path = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git");
         try {
-            Files.walk(path)
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
+            FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git"));
+//            Files.walk(path)
+//                    .sorted(Comparator.reverseOrder())
+//                    .map(Path::toFile)
+//                    .forEach(File::delete);
         } catch (Exception ignored) {}
-        (new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git")).delete();
-        (new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.gitignore")).delete();
+        try {
+            FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/plugins/GitMcSync"));
+        } catch(Exception ignored) {}
+        try {
+            (new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git")).delete();
+        } catch(Exception ignored) {}
+        try {
+            (new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.gitignore")).delete();
+        } catch(Exception ignored) {}
 
         List<Path> pathsNew = new ArrayList<>();
         try {
