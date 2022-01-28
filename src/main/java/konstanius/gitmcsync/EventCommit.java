@@ -26,7 +26,11 @@ public class EventCommit {
         TextComponent tc = new TextComponent(getString("commit-accept"));
         tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/gitmerge " + current));
         tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(getString("commit-accept-hover"))));
+        if(message.toString().contains(getString("export-contains"))) {
+            return;
+        }
         String command = "";
+        String mess = message.toString();
         if(message.toString().startsWith("/") && message.toString().contains(" / ")) {
             String[] array = message.toString().split("/");
             command = array[1];
@@ -37,8 +41,8 @@ public class EventCommit {
                     message.append("/");
                 }
             }
+            mess = message.toString().replaceFirst(" ", "");
         }
-        String mess = message.toString().replaceFirst(" ", "");
         log("========= Commit detected =========");
         log("Pusher : " + pusher);
         log("Message: " + mess);
