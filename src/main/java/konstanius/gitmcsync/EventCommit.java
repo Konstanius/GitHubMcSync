@@ -58,7 +58,6 @@ public class EventCommit {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalCommand);
             });
-            auto = true;
         }
         else {
             auto = false;
