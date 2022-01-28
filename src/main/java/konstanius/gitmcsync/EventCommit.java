@@ -31,6 +31,7 @@ public class EventCommit {
         }
         String command = "";
         String mess = message.toString();
+        boolean auto = false;
         if(message.toString().startsWith("/") && message.toString().contains(" / ")) {
             String[] array = message.toString().split("/");
             command = array[1];
@@ -42,6 +43,7 @@ public class EventCommit {
                 }
             }
             mess = message.toString().replaceFirst(" ", "");
+            auto = true;
         }
         log("========= Commit detected =========");
         log("Pusher : " + pusher);
@@ -51,13 +53,15 @@ public class EventCommit {
         TextComponent tc2 = new TextComponent(getString("commit-changes"));
         tc2.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,  current));
         tc2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(getString("commit-changes-hover").replace("%link%", current))));
-        boolean auto = false;
         if(Objects.requireNonNull(config.getList("op-pushers")).contains(pusher)) {
             String finalCommand = command;
             Bukkit.getScheduler().runTask(plugin, () -> {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalCommand);
             });
             auto = true;
+        }
+        else {
+            auto = false;
         }
         for(Player p: Bukkit.getOnlinePlayers()) {
             if(p.hasPermission("gitsync.notify") && !muteList.contains(p)) {
