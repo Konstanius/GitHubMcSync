@@ -1,9 +1,11 @@
 package konstanius.gitmcsync;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
@@ -78,6 +80,15 @@ public class CommandGitExport implements CommandExecutor {
                         .setCredentialsProvider(new UsernamePasswordCredentialsProvider(getString("token"), ""))
                         .call();
                 sender.sendMessage(getString("export-successful"));
+                if(sender instanceof Player) {
+                    try {
+                        ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
+                        Thread.sleep(500);
+                        ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
+                        Thread.sleep(500);
+                        ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
+                    } catch (Exception ignored) {}
+                }
                 busy = false;
             }
             catch (Exception e) {

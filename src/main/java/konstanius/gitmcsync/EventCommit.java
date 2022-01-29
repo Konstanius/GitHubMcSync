@@ -19,7 +19,6 @@ public class EventCommit {
         if(!json.getString("ref").equals("refs/heads/main")) {
             return;
         }
-        ready = true;
         String pusher = json.getJSONObject("pusher").getString("name");
         StringBuilder message = new StringBuilder(json.getJSONObject("head_commit").getString("message"));
         current = json.getString("compare");
@@ -48,7 +47,12 @@ public class EventCommit {
         log("========= Commit detected =========");
         log("Pusher : " + pusher);
         log("Message: " + mess);
-        log("Changes: " + current);
+        if(auto) {
+            log(getString("commit-auto").replace("%command%", command));
+        }
+        else {
+            log("Changes: " + current);
+        }
         log("===================================");
         TextComponent tc2 = new TextComponent(getString("commit-changes"));
         tc2.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,  current));
@@ -74,6 +78,7 @@ public class EventCommit {
                 }
                 else {
                     p.spigot().sendMessage(tc);
+                    ready = true;
                 }
                 p.sendMessage(getString("commit-footer"));
             }

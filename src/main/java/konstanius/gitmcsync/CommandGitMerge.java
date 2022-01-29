@@ -2,9 +2,11 @@ package konstanius.gitmcsync;
 
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
@@ -70,6 +72,15 @@ public class CommandGitMerge implements CommandExecutor {
             }
             if(args.length > 1 && Arrays.asList(args).contains("-r")) {
                 Bukkit.getScheduler().runTask(plugin, () -> plugin.getServer().dispatchCommand(sender, "restart"));
+            }
+            if(sender instanceof Player) {
+                try {
+                    ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
+                    Thread.sleep(500);
+                    ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
+                    Thread.sleep(500);
+                    ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
+                } catch (Exception ignored) {}
             }
         });
         return true;
