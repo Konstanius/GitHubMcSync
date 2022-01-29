@@ -50,10 +50,6 @@ public class CommandGitExport implements CommandExecutor {
             try {
                 try {
                     FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp"));
-//                    Files.walk(Path.of(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp"))
-//                            .sorted(Comparator.reverseOrder())
-//                            .map(Path::toFile)
-//                            .forEach(File::delete);
                     Files.createDirectory(Path.of(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp"));
                 } catch (Exception ignored) {}
                 File file = new File(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp");

@@ -67,7 +67,6 @@ public class ActionMerge {
                                 break;
                             }
                         }
-                        pathsNew.add(file);
                     }
                     else {
                         pathsNew.add(file);
