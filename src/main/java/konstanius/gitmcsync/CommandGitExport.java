@@ -69,38 +69,38 @@ public class CommandGitExport implements CommandExecutor {
                     e.printStackTrace();
                 }
                 FileUtils.copyDirectory(new File(path), new File(newPath));
-                try {
-                    Files.walkFileTree(Path.of(newPath), new FileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                            return FileVisitResult.CONTINUE;
-                        }
+                if(Boolean.parseBoolean(getString("whitelist-filetypes"))) {
+                    try {
+                        Files.walkFileTree(Path.of(newPath), new FileVisitor<Path>() {
+                            @Override
+                            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                                return FileVisitResult.CONTINUE;
+                            }
 
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                            if(Boolean.parseBoolean(getString("whitelist-filetypes"))) {
+                            @Override
+                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                                 for(String type: Objects.requireNonNull(config.getStringList("filetypes"))) {
-                                    if(!file.toAbsolutePath().toString().contains(type)) {
-                                        (new File(String.valueOf(file))).delete();
-                                        break;
+                                    if(file.toAbsolutePath().toString().contains(type)) {
+                                        return FileVisitResult.CONTINUE;
                                     }
                                 }
+                                (new File(file.toAbsolutePath().toString())).delete();
+                                return FileVisitResult.CONTINUE;
                             }
-                            return FileVisitResult.CONTINUE;
-                        }
 
-                        @Override
-                        public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                            return FileVisitResult.CONTINUE;
-                        }
+                            @Override
+                            public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                                return FileVisitResult.CONTINUE;
+                            }
 
-                        @Override
-                        public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
+                            @Override
+                            public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 try {
                     FileUtils.deleteDirectory(new File(newPath + "/plugins/GitMcSync"));
