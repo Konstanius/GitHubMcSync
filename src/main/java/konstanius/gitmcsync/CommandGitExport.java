@@ -15,8 +15,11 @@ import org.jetbrains.annotations.NotNull;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
+import java.util.Objects;
 
 import static konstanius.gitmcsync.GitMcSync.*;
 
@@ -66,6 +69,39 @@ public class CommandGitExport implements CommandExecutor {
                     e.printStackTrace();
                 }
                 FileUtils.copyDirectory(new File(path), new File(newPath));
+                try {
+                    Files.walkFileTree(Path.of(newPath), new FileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                            if(Boolean.parseBoolean(getString("whitelist-filetypes"))) {
+                                for(String type: Objects.requireNonNull(config.getStringList("filetypes"))) {
+                                    if(!file.toAbsolutePath().toString().contains(type)) {
+                                        (new File(String.valueOf(file))).delete();
+                                        break;
+                                    }
+                                }
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 try {
                     FileUtils.deleteDirectory(new File(newPath + "/plugins/GitMcSync"));
                 }
