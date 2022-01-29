@@ -10,10 +10,7 @@ import org.bukkit.plugin.Plugin;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static konstanius.gitmcsync.GitMcSync.*;
 
@@ -63,7 +60,18 @@ public class ActionMerge {
                 }
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    pathsNew.add(file);
+                    if(Boolean.parseBoolean(getString("whitelist-filetypes"))) {
+                        for(String type: Objects.requireNonNull(config.getStringList("filetypes"))) {
+                            if(file.toAbsolutePath().toString().contains(type) || !file.toAbsolutePath().toString().contains(".")) {
+                                pathsNew.add(file);
+                                break;
+                            }
+                        }
+                        pathsNew.add(file);
+                    }
+                    else {
+                        pathsNew.add(file);
+                    }
                     return FileVisitResult.CONTINUE;
                 }
                 @Override

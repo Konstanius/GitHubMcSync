@@ -26,5 +26,13 @@ reload-format: "&4[&c%plugin%&4]"
 reload-hover: "&4&lClick here to reload Plugin: &c%plugin%"
 export-successful: "&3&lServer >> &7Successfully exported"
 export-message: "Automatic export by %player%: %path%"
+export-contains: "Automatic export by"
+whitelist-filetypes: "false"
+filetypes:
+  - ".yml"
+  - ".txt"
+  - ".json"
+  - ".properties"
+  - ".png"
 op-pushers:
   - "Konstanius"

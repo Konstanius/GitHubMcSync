@@ -65,9 +65,9 @@ public class CommandGitUpgrade implements CommandExecutor {
                 if(sender instanceof Player) {
                     try {
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
-                        Thread.sleep(500);
+                        Thread.sleep(300);
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
-                        Thread.sleep(500);
+                        Thread.sleep(300);
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
                     } catch (Exception ignored) {}
                 }
