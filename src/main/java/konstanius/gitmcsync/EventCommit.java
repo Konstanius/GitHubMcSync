@@ -48,7 +48,7 @@ public class EventCommit {
         log("Pusher : " + pusher);
         log("Message: " + mess);
         if(auto) {
-            log(getString("commit-auto").replace("%command%", command));
+            log("Automatic action performed: " + command);
         }
         else {
             log("Changes: " + current);

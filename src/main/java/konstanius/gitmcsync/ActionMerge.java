@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -65,6 +66,9 @@ public class ActionMerge {
                             if(file.toAbsolutePath().toString().contains(type) || !file.toAbsolutePath().toString().contains(".")) {
                                 pathsNew.add(file);
                                 break;
+                            }
+                            else {
+                                (new File(String.valueOf(file))).delete();
                             }
                         }
                     }

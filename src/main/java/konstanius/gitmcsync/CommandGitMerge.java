@@ -162,13 +162,8 @@ public class CommandGitMerge implements CommandExecutor {
             e.printStackTrace();
         }
 
-//        path = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git");
         try {
             FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git"));
-//            Files.walk(path)
-//                    .sorted(Comparator.reverseOrder())
-//                    .map(Path::toFile)
-//                    .forEach(File::delete);
         } catch (Exception ignored) {}
         try {
             FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/plugins/GitMcSync"));
