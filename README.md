@@ -26,7 +26,7 @@
 - If a current project is still opened, click on File -> Close Project
 - Click "Get from VCS" in the top right
 - Select GitHub on the left, log-in with your account if applicable
-- Select `RiftCraftStudios/RiftCraft-SMP01` from the list of repositories
+- Select `server repository` from the list of repositories
 - Click Clone
 
 With this you have successfully cloned the repository on your local machine.
