@@ -1,4 +1,4 @@
-repository-url: "https://github.com/Konstanius/servertest"
+repository-url: ""
 authenticate: "false"
 token: ""
 not-authenticated: "&3&lServer >> &4&lAuthentication is disabled at the moment!"
