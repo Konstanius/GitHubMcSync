@@ -59,6 +59,7 @@ public final class GitMcSync extends JavaPlugin {
         getCommand("gitupgrade").setExecutor(new CommandGitUpgrade());
         getCommand("gitmute").setExecutor(new CommandGitMute());
         getCommand("gitexport").setExecutor(new CommandGitExport());
+        getCommand("gitclean").setExecutor(new CommandGitClean());
 
         try {
             server = HttpServer.create(new InetSocketAddress(Integer.parseInt(getString("webhook-port"))), 0);
