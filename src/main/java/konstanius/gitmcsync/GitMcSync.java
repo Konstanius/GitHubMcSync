@@ -24,7 +24,7 @@ import static konstanius.gitmcsync.EventCommit.eventCommit;
 public final class GitMcSync extends JavaPlugin {
     public static FileConfiguration config;
     public static Logger logger = Bukkit.getLogger();
-    public static HttpServer server;
+    public static HttpServer webServer;
     public static String current = " ";
     public static String old = " ";
     public static boolean ready = false;
@@ -62,18 +62,18 @@ public final class GitMcSync extends JavaPlugin {
         getCommand("gitclean").setExecutor(new CommandGitClean());
 
         try {
-            server = HttpServer.create(new InetSocketAddress(Integer.parseInt(getString("webhook-port"))), 0);
+            webServer = HttpServer.create(new InetSocketAddress(Integer.parseInt(getString("webhook-port"))), 0);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        server.createContext("/webhook", new MyHandler());
-        server.setExecutor(null);
-        server.start();
+        webServer.createContext("/webhook", new MyHandler());
+        webServer.setExecutor(null);
+        webServer.start();
     }
 
     @Override
     public void onDisable() {
-        server.stop(0);
+        webServer.stop(0);
     }
 
     static class MyHandler implements HttpHandler {
