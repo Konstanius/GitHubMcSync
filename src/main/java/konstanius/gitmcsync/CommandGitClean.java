@@ -1,8 +1,10 @@
 package konstanius.gitmcsync;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,26 +24,28 @@ public class CommandGitClean implements CommandExecutor {
             return true;
         }
         busy = true;
-        Path old = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoOld");
-        try {
-            Files.walk(old)
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-        } catch (Exception ignored) {}
-        Path clone = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone");
-        try {
-            Files.walk(clone)
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-        } catch (Exception ignored) {}
-        try {
-            Files.createDirectory(Path.of(plugin.getDataFolder() + "/RepoOld"));
-            Files.createDirectory(Path.of(plugin.getDataFolder() + "/RepoClone"));
-        } catch(Exception ignored) {}
-        sender.sendMessage(getString("clean-successful"));
-        busy = false;
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            Path old = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoOld");
+            try {
+                Files.walk(old)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            } catch (Exception ignored) {}
+            Path clone = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone");
+            try {
+                Files.walk(clone)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            } catch (Exception ignored) {}
+            try {
+                Files.createDirectory(Path.of(plugin.getDataFolder() + "/RepoOld"));
+                Files.createDirectory(Path.of(plugin.getDataFolder() + "/RepoClone"));
+            } catch(Exception ignored) {}
+            sender.sendMessage(getString("clean-successful"));
+            busy = false;
+        });
         return true;
     }
 }
