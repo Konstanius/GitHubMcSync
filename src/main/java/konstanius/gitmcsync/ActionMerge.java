@@ -93,9 +93,17 @@ public class ActionMerge {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        boolean jars = Boolean.parseBoolean(getString("compare-jar"));
+        boolean others = Boolean.parseBoolean(getString("compare-other"));
         for(Path p: pathsNew) {
             Path newPath = Path.of(String.valueOf(p).replace("plugins/GitMcSync/RepoClone/", ""));
             try {
+                if(newPath.endsWith(".jar") && jars && Files.size(newPath) == Files.size(Path.of(p.toFile().getAbsolutePath()))) {
+                    continue;
+                }
+                if(others && Files.size(newPath) == Files.size(Path.of(p.toFile().getAbsolutePath()))) {
+                    continue;
+                }
                 Files.copy(Path.of(p.toFile().getAbsolutePath()), newPath, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException ignored) {}
         }

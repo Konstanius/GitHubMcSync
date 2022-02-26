@@ -6,7 +6,7 @@
 
     <groupId>konstanius</groupId>
     <artifactId>GitMcSync</artifactId>
-    <version>R-1.0</version>
+    <version>R-1.1</version>
     <packaging>jar</packaging>
 
     <name>GitMcSync</name>
