@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static konstanius.gitmcsync.ActionMerge.mergeAll;
+import static konstanius.gitmcsync.ActionMerge.mergeReloads;
 import static konstanius.gitmcsync.ActionMerge.mergeFiles;
 import static konstanius.gitmcsync.GitMcSync.*;
 
@@ -68,7 +68,7 @@ public class CommandGitMerge implements CommandExecutor {
                 busy = false;
             }
             else {
-                mergeAll(plugin, sender);
+                mergeReloads(plugin, sender);
             }
             if(args.length > 1 && Arrays.asList(args).contains("-r")) {
                 Bukkit.getScheduler().runTask(plugin, () -> plugin.getServer().dispatchCommand(sender, "restart"));
@@ -136,12 +136,6 @@ public class CommandGitMerge implements CommandExecutor {
             e.printStackTrace();
         }
 
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         Path path = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone");
         try {
             Files.walk(path)
@@ -163,16 +157,20 @@ public class CommandGitMerge implements CommandExecutor {
         }
 
         try {
-            FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git"));
-        } catch (Exception ignored) {}
-        try {
+            Path pathGit = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/plugins/GitMcSync");
+            try {
+                Files.walk(pathGit)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            } catch (Exception ignored) {}
             FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/plugins/GitMcSync"));
         } catch(Exception ignored) {}
         try {
+            FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git"));
             (new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git")).delete();
-        } catch(Exception ignored) {}
-        try {
             (new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.gitignore")).delete();
+            (new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/README.md")).delete();
         } catch(Exception ignored) {}
 
         List<Path> pathsNew = new ArrayList<>();

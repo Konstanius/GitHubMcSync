@@ -43,7 +43,6 @@ public class CommandGitUpgrade implements CommandExecutor {
         }
         busy = true;
         Plugin finalPl = pl;
-        Plugin finalPl1 = pl;
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             CommandGitMerge.fetchFiles(plugin);
             Path src = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/plugins/" + finalPl.getName());
@@ -54,14 +53,15 @@ public class CommandGitUpgrade implements CommandExecutor {
                         plugin.getServer().dispatchCommand(sender, "restart");
                     }
                     else if(args[1].matches("-b")) {
-                        plugin.getServer().dispatchCommand(sender, "biletools:bile reload " + finalPl1.getName());
+                        plugin.getServer().dispatchCommand(sender, "biletools:bile reload " + finalPl.getName());
                     }
                     log("False");
                 }
                 else {
-                    plugin.getServer().dispatchCommand(sender, finalPl1.getName() + " reload");
+                    plugin.getServer().dispatchCommand(sender, finalPl.getName() + " reload");
                 }
                 sender.sendMessage(getString("successful-plugin"));
+                busy = false;
                 if(sender instanceof Player) {
                     try {
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
@@ -71,7 +71,6 @@ public class CommandGitUpgrade implements CommandExecutor {
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
                     } catch (Exception ignored) {}
                 }
-                busy = false;
             });
         });
         return true;

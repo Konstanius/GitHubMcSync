@@ -21,6 +21,10 @@ public class CommandGitClean implements CommandExecutor {
             sender.sendMessage(getString("no-permission"));
             return true;
         }
+        if(busy) {
+            sender.sendMessage(getString("busy"));
+            return true;
+        }
         busy = true;
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             Path old = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoOld");
@@ -37,9 +41,17 @@ public class CommandGitClean implements CommandExecutor {
                         .map(Path::toFile)
                         .forEach(File::delete);
             } catch (Exception ignored) {}
+            Path temp = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoTemp");
             try {
-                Files.createDirectory(Path.of(plugin.getDataFolder() + "/RepoOld"));
-                Files.createDirectory(Path.of(plugin.getDataFolder() + "/RepoClone"));
+                Files.walk(temp)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            } catch (Exception ignored) {}
+            try {
+                Files.delete(Path.of(plugin.getDataFolder() + "/RepoOld"));
+                Files.delete(Path.of(plugin.getDataFolder() + "/RepoClone"));
+                Files.delete(Path.of(plugin.getDataFolder() + "/RepoTemp"));
             } catch(Exception ignored) {}
             sender.sendMessage(getString("clean-successful"));
             busy = false;

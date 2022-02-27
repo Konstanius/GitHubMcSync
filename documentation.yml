@@ -1,0 +1,83 @@
+/gitupgrade <plugin>: # upgrade files of a specific plugin and perform flag ations
+  busy = true
+  fetchFiles:
+    - delete all contents of RepoOld
+    - create directory RepoOld
+    - create directory RepoClone
+    - add all files in RepoClone to list of their paths [pathsOld]
+    - copy contents of RepoClone to RepoOld
+    - delete all contents of RepoClone
+    - download entire repository in RepoClone
+    - delete .git, .gitignore, .README.md
+    - clear cloned plugin folder and delete it
+    - add all files in RepoClone to list of their paths [pathsNew]
+    - compare pathsOld to pathsNew, when discrepancy log deletion of file
+    - delete discrepancy file from server files
+    - compare pathsNew to pathsOld, when discrepancy log creation of file
+  mergeFiles of specified plugin path:
+    walk through all files in RepoClone/plugins/Plugin:
+      - add all files matching whitelist to list [pathsNew]
+      - delete files not matching whitelist
+      - create all directories in filetree
+      - copy all configured files if size isnt the same as before
+  flags:
+    -r: restart
+    -b: bile reload
+    other: nothing
+    none: /<plugin> reload
+  busy = false
+  play finished sound
+
+/gitclean: # delete all local cache files
+  busy = true
+  delete all contents of /RepoOld, /RepoClone, /RepoTemp
+  delete directories /RepoOld, /RepoClone, /RepoTemp
+  busy = false
+
+/gitmute: # mute notifications about commits
+  toggle mute state
+
+/gitpull: # manually create commit event and perform flag actions
+  manually create custom JSON, including sender name
+  busy = true
+  current = repo link
+  log commit message
+  send commit message to all permission players [gitsync.notify] if unmuted
+  ready = true
+  flags:
+    -ai -r: automatic /gitmerge -r
+    -ai -s: automatic /gitmerge -s
+    -ai: automatic /gitmerge
+
+/gitmerge: # update all files and perform flag actions
+  busy = true
+  fetchFiles:
+    - delete all contents of RepoOld
+    - create directory RepoOld
+    - create directory RepoClone
+    - add all files in RepoClone to list of their paths [pathsOld]
+    - copy contents of RepoClone to RepoOld
+    - delete all contents of RepoClone
+    - download entire repository in RepoClone
+    - delete .git, .gitignore, .README.md
+    - clear cloned plugin folder and delete it
+    - add all files in RepoClone to list of their paths [pathsNew]
+    - compare pathsOld to pathsNew, when discrepancy log deletion of file
+    - delete discrepancy file from server files
+    - compare pathsNew to pathsOld, when discrepancy log creation of file
+  mergeFiles:
+    walk through all files in RepoClone:
+      - add all files matching whitelist to list [pathsNew]
+      - delete files not matching whitelist
+      - create all directories in filetree
+      - copy all configured files if size isnt the same as before
+    busy = false
+    ready = false
+    flags:
+      -r: restart server
+      -s: no reload plugins list
+      none: display list to reload plugins using BileTools
+    play finished sound
+
+/gitexport:
+  busy = true

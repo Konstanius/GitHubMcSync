@@ -16,7 +16,7 @@ import java.util.*;
 import static konstanius.gitmcsync.GitMcSync.*;
 
 public class ActionMerge {
-    public static void mergeAll(Plugin plugin, CommandSender sender) {
+    public static void mergeReloads(Plugin plugin, CommandSender sender) {
         Path src = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone");
         mergeFiles(src);
         ready = false;

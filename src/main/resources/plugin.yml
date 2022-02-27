@@ -16,3 +16,5 @@ commands:
     description: "gitsync.mute"
   gitexport:
     description: "gitsync.export"
+  gitclean:
+    description: "gitsync.clean"
