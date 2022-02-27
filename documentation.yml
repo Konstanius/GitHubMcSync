@@ -79,5 +79,10 @@
       none: display list to reload plugins using BileTools
     play finished sound
 
-/gitexport:
+/gitexport: # Export given path to repository
   busy = true
+  delete directory RepoTemp
+  create directory RepoTemp
+  copy given directory to RepoTemp
+  commit and push to repository
+  busy = false

@@ -207,7 +207,6 @@ public class CommandGitMerge implements CommandExecutor {
                 log("File: " + p.toString().replace(plugin.getDataFolder().getAbsolutePath() + "/RepoClone", "") + " has been deleted");
             }
         }
-
         for(Path p: pathsNew) {
             if(!pathsOld.contains(p)) {
                 log("File: " + p.toString().replace(plugin.getDataFolder().getAbsolutePath() + "/RepoClone", "") + " has been created");

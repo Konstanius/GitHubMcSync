@@ -110,6 +110,7 @@ public class CommandGitExport implements CommandExecutor {
                         .setCredentialsProvider(new UsernamePasswordCredentialsProvider(getString("token"), ""))
                         .call();
                 sender.sendMessage(getString("export-successful"));
+                busy = false;
                 if(sender instanceof Player) {
                     try {
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
@@ -119,7 +120,6 @@ public class CommandGitExport implements CommandExecutor {
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
                     } catch (Exception ignored) {}
                 }
-                busy = false;
             }
             catch (Exception e) {
                 e.printStackTrace();
