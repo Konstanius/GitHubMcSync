@@ -1,5 +1,5 @@
 name: GitMcSync
-version: 'R-1.3'
+version: 'R-1.4'
 main: konstanius.gitmcsync.GitMcSync
 api-version: 1.17
 load: STARTUP

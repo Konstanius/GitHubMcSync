@@ -47,12 +47,8 @@ public final class GitMcSync extends JavaPlugin {
         } catch(Exception e) {
             e.printStackTrace();
         }
-        try {
-            Files.createDirectory(Path.of(this.getDataFolder() + "/RepoOld"));
-        } catch(Exception ignored) {}
-        try {
-            Files.createDirectory(Path.of(this.getDataFolder() + "/RepoClone"));
-        } catch(Exception ignored) {}
+        try {Files.createDirectory(Path.of(this.getDataFolder() + "/RepoOld"));} catch(Exception ignored) {}
+        try {Files.createDirectory(Path.of(this.getDataFolder() + "/RepoClone"));} catch(Exception ignored) {}
 
         getCommand("gitmerge").setExecutor(new CommandGitMerge());
         getCommand("gitpull").setExecutor(new CommandGitPull());

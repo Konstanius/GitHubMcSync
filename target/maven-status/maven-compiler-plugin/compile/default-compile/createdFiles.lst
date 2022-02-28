@@ -3,14 +3,11 @@ konstanius\gitmcsync\EventCommit.class
 konstanius\gitmcsync\CommandGitClean.class
 konstanius\gitmcsync\CommandGitExport.class
 konstanius\gitmcsync\CommandGitUpgrade.class
-konstanius\gitmcsync\ActionMerge$3.class
 konstanius\gitmcsync\ActionMerge$2.class
 konstanius\gitmcsync\CommandGitExport$1.class
 konstanius\gitmcsync\CommandGitMerge.class
 konstanius\gitmcsync\CommandGitPull.class
 konstanius\gitmcsync\GitMcSync$MyHandler.class
-konstanius\gitmcsync\CommandGitMerge$1.class
 konstanius\gitmcsync\ActionMerge.class
-konstanius\gitmcsync\CommandGitMerge$2.class
 konstanius\gitmcsync\GitMcSync.class
 konstanius\gitmcsync\CommandGitMute.class

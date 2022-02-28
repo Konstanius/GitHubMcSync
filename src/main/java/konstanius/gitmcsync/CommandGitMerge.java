@@ -80,71 +80,18 @@ public class CommandGitMerge implements CommandExecutor {
                     ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
                     Thread.sleep(500);
                     ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
-                } catch (Exception ignored) {}
+                } catch (Exception e) {e.printStackTrace();}
             }
         });
         return true;
     }
 
     public static void fetchFiles(Plugin plugin) {
+        try {FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoOld"));} catch (Exception e) {e.printStackTrace();}
+        try {FileUtils.copyDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone"), new File(plugin.getDataFolder().getAbsolutePath() + "/RepoOld"), true);} catch (Exception ignored) {}
 
-        Path path1 = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoOld");
-        try {
-            Files.walk(path1)
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-        } catch (Exception ignored) {}
-
-        try {
-            Files.createDirectory(Path.of(plugin.getDataFolder() + "/RepoOld"));
-            Files.createDirectory(Path.of(plugin.getDataFolder() + "/RepoClone"));
-        } catch(Exception ignored) {}
-
-        List<Path> pathsOld = new ArrayList<>();
-
-        try {
-            Files.walkFileTree(Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone"), new FileVisitor<Path>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    pathsOld.add(file);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Files.copy(Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/"), Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoOld/"), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Path path = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone");
-        try {
-            Files.walk(path)
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-        } catch (Exception ignored) {}
-
-
+        try {FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone"));} catch (Exception e) {e.printStackTrace();}
+        try {Files.createDirectory(Path.of(plugin.getDataFolder() + "/RepoClone"));} catch(Exception e) {e.printStackTrace();}
 
         try {
             CloneCommand cloneCommand = Git.cloneRepository();
@@ -158,62 +105,10 @@ public class CommandGitMerge implements CommandExecutor {
             e.printStackTrace();
         }
 
-        try {
-            Path pathGit = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/plugins/GitMcSync");
-            try {
-                Files.walk(pathGit)
-                        .sorted(Comparator.reverseOrder())
-                        .map(Path::toFile)
-                        .forEach(File::delete);
-            } catch (Exception ignored) {}
-            FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/plugins/GitMcSync"));
-        } catch(Exception ignored) {}
-        try {
-            FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git"));
-            (new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git")).delete();
-            (new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.gitignore")).delete();
-            (new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/README.md")).delete();
-        } catch(Exception ignored) {}
-
-        List<Path> pathsNew = new ArrayList<>();
-        try {
-            Files.walkFileTree(Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone"), new FileVisitor<Path>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    pathsNew.add(file);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-/*
-        for(Path p: pathsOld) {
-            if(!pathsNew.contains(p)) {
-                (new File(String.valueOf(p).replace("plugins/GitMcSync/RepoClone/", ""))).delete();
-                log("File: " + p.toString().replace(plugin.getDataFolder().getAbsolutePath() + "/RepoClone", "") + " has been deleted");
-            }
-        }
-        for(Path p: pathsNew) {
-            if(!pathsOld.contains(p)) {
-                log("File: " + p.toString().replace(plugin.getDataFolder().getAbsolutePath() + "/RepoClone", "") + " has been created");
-            }
-        }
-*/
+        try {FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/plugins/GitMcSync"));} catch(Exception e) {e.printStackTrace();}
+        try {FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git"));} catch(Exception e) {e.printStackTrace();}
+        try {(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.git")).delete();} catch(Exception e) {e.printStackTrace();}
+        try {(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/.gitignore")).delete();} catch(Exception e) {e.printStackTrace();}
+        try {(new File(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/README.md")).delete();} catch(Exception e) {e.printStackTrace();}
     }
 }

@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="GitHubMcSync" target="8" />
+      <module name="GitHubMcSync" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
