@@ -144,6 +144,8 @@ public class CommandGitMerge implements CommandExecutor {
                     .forEach(File::delete);
         } catch (Exception ignored) {}
 
+
+
         try {
             CloneCommand cloneCommand = Git.cloneRepository();
             cloneCommand.setURI(getString("repository-url").replace("https://", "https://" + getString("token") + "@"));
@@ -200,7 +202,7 @@ public class CommandGitMerge implements CommandExecutor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+/*
         for(Path p: pathsOld) {
             if(!pathsNew.contains(p)) {
                 (new File(String.valueOf(p).replace("plugins/GitMcSync/RepoClone/", ""))).delete();
@@ -212,5 +214,6 @@ public class CommandGitMerge implements CommandExecutor {
                 log("File: " + p.toString().replace(plugin.getDataFolder().getAbsolutePath() + "/RepoClone", "") + " has been created");
             }
         }
+*/
     }
 }

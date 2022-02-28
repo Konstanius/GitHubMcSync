@@ -6,6 +6,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,17 +53,21 @@ public class ActionMerge {
     }
 
     public static void mergeFiles(Path src) {
+        boolean whitelistFiletypes = Boolean.parseBoolean(getString("whitelist-filetypes"));
+        boolean jars = Boolean.parseBoolean(getString("compare-jar"));
+        boolean others = Boolean.parseBoolean(getString("compare-other"));
+        List<String> fileTypes = config.getStringList("filetypes");
+
+
         List<Path> pathsNew = new ArrayList<>();
         try {
             Files.walkFileTree(src, new FileVisitor<Path>() {
-                @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     return FileVisitResult.CONTINUE;
                 }
-                @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    if(Boolean.parseBoolean(getString("whitelist-filetypes"))) {
-                        for(String type: Objects.requireNonNull(config.getStringList("filetypes"))) {
+                    if(whitelistFiletypes) {
+                        for(String type: fileTypes) {
                             if(file.toAbsolutePath().toString().contains(type) || !file.toAbsolutePath().toString().contains(".")) {
                                 pathsNew.add(file);
                                 break;
@@ -77,11 +82,9 @@ public class ActionMerge {
                     }
                     return FileVisitResult.CONTINUE;
                 }
-                @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) {
                     return FileVisitResult.CONTINUE;
                 }
-                @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
                     Path newPath = Path.of(String.valueOf(dir).replace("plugins/GitMcSync/RepoClone/", ""));
                     try {
@@ -90,22 +93,123 @@ public class ActionMerge {
                     return FileVisitResult.CONTINUE;
                 }
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        boolean jars = Boolean.parseBoolean(getString("compare-jar"));
-        boolean others = Boolean.parseBoolean(getString("compare-other"));
+
         for(Path p: pathsNew) {
             Path newPath = Path.of(String.valueOf(p).replace("plugins/GitMcSync/RepoClone/", ""));
             try {
                 if(newPath.endsWith(".jar") && jars && Files.size(newPath) == Files.size(Path.of(p.toFile().getAbsolutePath()))) {
+                    pathsNew.remove(p);
                     continue;
                 }
                 if(others && Files.size(newPath) == Files.size(Path.of(p.toFile().getAbsolutePath()))) {
+                    pathsNew.remove(p);
                     continue;
                 }
                 Files.copy(Path.of(p.toFile().getAbsolutePath()), newPath, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException ignored) {}
+        }
+
+        List<Path> pathsOld = new ArrayList<>();
+        src = Path.of(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoOld");
+        try {
+            Files.walkFileTree(src, new FileVisitor<Path>() {
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    return FileVisitResult.CONTINUE;
+                }
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if(whitelistFiletypes) {
+                        for(String type: fileTypes) {
+                            if(file.toAbsolutePath().toString().contains(type) || !file.toAbsolutePath().toString().contains(".")) {
+                                pathsOld.add(file);
+                                break;
+                            }
+                            else {
+                                (new File(String.valueOf(file))).delete();
+                            }
+                        }
+                    }
+                    else {
+                        pathsOld.add(file);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        List<Path> pathsClone = new ArrayList<>();
+        src = Path.of(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoClone");
+        try {
+            Files.walkFileTree(src, new FileVisitor<Path>() {
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    return FileVisitResult.CONTINUE;
+                }
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if(whitelistFiletypes) {
+                        for(String type: fileTypes) {
+                            if(file.toAbsolutePath().toString().contains(type) || !file.toAbsolutePath().toString().contains(".")) {
+                                pathsClone.add(file);
+                                break;
+                            }
+                            else {
+                                (new File(String.valueOf(file))).delete();
+                            }
+                        }
+                    }
+                    else {
+                        pathsClone.add(file);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(Boolean.parseBoolean(getString("log-changes"))) {
+            List<String> nNew = new ArrayList<>();
+            for(Path p: pathsNew) {
+                nNew.add(new File(String.valueOf(p)).getName());
+            }
+
+            List<String> nOld = new ArrayList<>();
+            for(Path p: pathsOld) {
+                nOld.add(new File(String.valueOf(p)).getName());
+            }
+
+            for(String str: nNew) {
+                if(!nOld.contains(str)) {
+                    log(str + " has been created");
+                }
+            }
+
+            for(String str: nOld) {
+                if(!nNew.contains(str)) {
+                    log(str + " has been deleted");
+                }
+            }
+
+            for(Path p: pathsNew) {
+                String name = new File(String.valueOf(p)).getName();
+                log(name + " has been modified");
+            }
         }
     }
 }

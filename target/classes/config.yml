@@ -30,6 +30,7 @@ export-contains: "Automatic export by"
 clean-successful: "&3&lServer >> &a&lSuccessfully deleted all local cache files"
 compare-jar: "true"
 compare-other: "false"
+log-changes: "true"
 whitelist-filetypes: "true"
 filetypes:
   - ".yml"

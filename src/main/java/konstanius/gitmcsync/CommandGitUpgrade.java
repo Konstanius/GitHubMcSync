@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 
 import static konstanius.gitmcsync.ActionMerge.mergeFiles;
+import static konstanius.gitmcsync.CommandGitMerge.fetchFiles;
 import static konstanius.gitmcsync.GitMcSync.*;
 
 public class CommandGitUpgrade implements CommandExecutor {
@@ -44,7 +45,7 @@ public class CommandGitUpgrade implements CommandExecutor {
         busy = true;
         Plugin finalPl = pl;
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            CommandGitMerge.fetchFiles(plugin);
+            fetchFiles(plugin);
             Path src = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/plugins/" + finalPl.getName());
             mergeFiles(src);
             Bukkit.getScheduler().runTask(plugin, () -> {
