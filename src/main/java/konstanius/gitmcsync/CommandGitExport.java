@@ -1,5 +1,6 @@
 package konstanius.gitmcsync;
 
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -11,11 +12,13 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jetbrains.annotations.NotNull;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Objects;
 
@@ -25,24 +28,24 @@ public class CommandGitExport implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(!sender.hasPermission("gitsync.export")) {
+        if (!sender.hasPermission("gitsync.export")) {
             sender.sendMessage(getString("no-permission"));
             return true;
         }
-        if(args.length != 1) {
+        if (args.length != 1) {
             sender.sendMessage(getString("missing-argument"));
             return true;
         }
         String path = plugin.getServer().getWorldContainer().getAbsolutePath().replace("/.", "") + args[0];
-        if(!(new File(path)).exists()) {
+        if (!(new File(path)).exists()) {
             sender.sendMessage(getString("invalid-directory"));
             return true;
         }
-        if(!Boolean.parseBoolean(getString("authenticate"))) {
+        if (!Boolean.parseBoolean(getString("authenticate"))) {
             sender.sendMessage(getString("not-authenticated"));
             return true;
         }
-        if(busy) {
+        if (busy) {
             sender.sendMessage(getString("busy"));
             return true;
         }
@@ -52,7 +55,8 @@ public class CommandGitExport implements CommandExecutor {
                 try {
                     FileUtils.deleteDirectory(new File(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp"));
                     Files.createDirectory(Path.of(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp"));
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
                 File file = new File(plugin.getDataFolder().getAbsolutePath().replace("/.", "") + "/RepoTemp");
                 Git git = Git.cloneRepository()
                         .setURI(getString("repository-url").replace("https://", "https://" + getString("token") + "@"))
@@ -67,18 +71,16 @@ public class CommandGitExport implements CommandExecutor {
                     e.printStackTrace();
                 }
                 FileUtils.copyDirectory(new File(path), new File(newPath));
-                if(Boolean.parseBoolean(getString("whitelist-filetypes"))) {
+                if (Boolean.parseBoolean(getString("whitelist-filetypes"))) {
                     try {
                         Files.walkFileTree(Path.of(newPath), new FileVisitor<Path>() {
-                            @Override
                             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                                 return FileVisitResult.CONTINUE;
                             }
 
-                            @Override
                             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                                for(String type: Objects.requireNonNull(config.getStringList("filetypes"))) {
-                                    if(file.toAbsolutePath().toString().contains(type)) {
+                                for (String type : Objects.requireNonNull(config.getStringList("filetypes"))) {
+                                    if (file.toAbsolutePath().toString().contains(type)) {
                                         return FileVisitResult.CONTINUE;
                                     }
                                 }
@@ -86,12 +88,10 @@ public class CommandGitExport implements CommandExecutor {
                                 return FileVisitResult.CONTINUE;
                             }
 
-                            @Override
                             public FileVisitResult visitFileFailed(Path file, IOException exc) {
                                 return FileVisitResult.CONTINUE;
                             }
 
-                            @Override
                             public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
                                 return FileVisitResult.CONTINUE;
                             }
@@ -102,8 +102,8 @@ public class CommandGitExport implements CommandExecutor {
                 }
                 try {
                     FileUtils.deleteDirectory(new File(newPath + "/plugins/GitMcSync"));
+                } catch (Exception ignored) {
                 }
-                catch(Exception ignored) {}
                 git.add().addFilepattern(".").call();
                 RevCommit result = git.commit().setMessage(getString("export-message").replace("%path%", args[0]).replace("%player%", sender.getName())).call();
                 git.push()
@@ -111,17 +111,17 @@ public class CommandGitExport implements CommandExecutor {
                         .call();
                 sender.sendMessage(getString("export-successful"));
                 busy = false;
-                if(sender instanceof Player) {
+                if (sender instanceof Player) {
                     try {
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
                         Thread.sleep(500);
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
                         Thread.sleep(500);
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });

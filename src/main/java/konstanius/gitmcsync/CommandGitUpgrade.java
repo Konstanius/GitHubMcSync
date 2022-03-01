@@ -19,26 +19,26 @@ public class CommandGitUpgrade implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(!sender.hasPermission("gitsync.merge")) {
+        if (!sender.hasPermission("gitsync.merge")) {
             sender.sendMessage(getString("permission-denied"));
             return true;
         }
-        if(busy) {
+        if (busy) {
             sender.sendMessage(getString("busy"));
             return true;
         }
-        if(args.length == 0) {
+        if (args.length == 0) {
             sender.sendMessage(getString("missing-argument"));
             return true;
         }
         Plugin pl = null;
-        for(Plugin p: plugin.getServer().getPluginManager().getPlugins()) {
-            if(args[0].toLowerCase().matches(p.getName().toLowerCase())) {
+        for (Plugin p : plugin.getServer().getPluginManager().getPlugins()) {
+            if (args[0].toLowerCase().matches(p.getName().toLowerCase())) {
                 pl = p;
                 break;
             }
         }
-        if(pl == null) {
+        if (pl == null) {
             sender.sendMessage(getString("invalid-plugin"));
             return true;
         }
@@ -49,28 +49,27 @@ public class CommandGitUpgrade implements CommandExecutor {
             Path src = Path.of(plugin.getDataFolder().getAbsolutePath() + "/RepoClone/plugins/" + finalPl.getName());
             mergeFiles(src);
             Bukkit.getScheduler().runTask(plugin, () -> {
-                if(args.length > 1) {
-                    if(args[1].matches("-r")) {
+                if (args.length > 1) {
+                    if (args[1].matches("-r")) {
                         plugin.getServer().dispatchCommand(sender, "restart");
-                    }
-                    else if(args[1].matches("-b")) {
+                    } else if (args[1].matches("-b")) {
                         plugin.getServer().dispatchCommand(sender, "biletools:bile reload " + finalPl.getName());
                     }
                     log("False");
-                }
-                else {
+                } else {
                     plugin.getServer().dispatchCommand(sender, finalPl.getName() + " reload");
                 }
                 sender.sendMessage(getString("successful-plugin"));
                 busy = false;
-                if(sender instanceof Player) {
+                if (sender instanceof Player) {
                     try {
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
                         Thread.sleep(300);
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
                         Thread.sleep(300);
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
             });
         });

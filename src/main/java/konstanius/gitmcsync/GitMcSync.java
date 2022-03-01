@@ -15,7 +15,9 @@ import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,11 +46,17 @@ public final class GitMcSync extends JavaPlugin {
                     whatismyip.openStream()));
             String ip = in.readLine();
             log("GitMcSync started listening on: http://" + ip + ":" + getString("webhook-port") + "/webhook");
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        try {Files.createDirectory(Path.of(this.getDataFolder() + "/RepoOld"));} catch(Exception ignored) {}
-        try {Files.createDirectory(Path.of(this.getDataFolder() + "/RepoClone"));} catch(Exception ignored) {}
+        try {
+            Files.createDirectory(Path.of(this.getDataFolder() + "/RepoOld"));
+        } catch (Exception ignored) {
+        }
+        try {
+            Files.createDirectory(Path.of(this.getDataFolder() + "/RepoClone"));
+        } catch (Exception ignored) {
+        }
 
         getCommand("gitmerge").setExecutor(new CommandGitMerge());
         getCommand("gitpull").setExecutor(new CommandGitPull());

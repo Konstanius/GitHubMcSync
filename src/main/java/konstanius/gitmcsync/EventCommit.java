@@ -16,7 +16,7 @@ import static konstanius.gitmcsync.GitMcSync.*;
 
 public class EventCommit {
     public static void eventCommit(JSONObject json) {
-        if(!json.getString("ref").equals("refs/heads/main")) {
+        if (!json.getString("ref").equals("refs/heads/main")) {
             return;
         }
         String pusher = json.getJSONObject("pusher").getString("name");
@@ -25,19 +25,19 @@ public class EventCommit {
         TextComponent tc = new TextComponent(getString("commit-accept"));
         tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/gitmerge " + current));
         tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(getString("commit-accept-hover"))));
-        if(message.toString().contains(getString("export-contains"))) {
+        if (message.toString().contains(getString("export-contains"))) {
             return;
         }
         String command = "";
         String mess = message.toString();
         boolean auto = false;
-        if(message.toString().startsWith("/") && message.toString().contains(" / ")) {
+        if (message.toString().startsWith("/") && message.toString().contains(" / ")) {
             String[] array = message.toString().split("/");
             command = array[1];
             message = new StringBuilder();
-            for(int i = 2; i < array.length; i++) {
+            for (int i = 2; i < array.length; i++) {
                 message.append(array[i]);
-                if(!(i + 1 == array.length)) {
+                if (!(i + 1 == array.length)) {
                     message.append("/");
                 }
             }
@@ -47,36 +47,33 @@ public class EventCommit {
         log("========= Commit detected =========");
         log("Pusher : " + pusher);
         log("Message: " + mess);
-        if(auto) {
+        if (auto) {
             log("Automatic action performed: " + command);
-        }
-        else {
+        } else {
             log("Changes: " + current);
         }
         log("===================================");
         TextComponent tc2 = new TextComponent(getString("commit-changes"));
-        tc2.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,  current));
+        tc2.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, current));
         tc2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(getString("commit-changes-hover").replace("%link%", current))));
-        if(Objects.requireNonNull(config.getList("op-pushers")).contains(pusher) && auto) {
+        if (Objects.requireNonNull(config.getList("op-pushers")).contains(pusher) && auto) {
             String finalCommand = command;
             Bukkit.getScheduler().runTask(plugin, () -> {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalCommand);
             });
-        }
-        else {
+        } else {
             auto = false;
         }
-        for(Player p: Bukkit.getOnlinePlayers()) {
-            if(p.hasPermission("gitsync.notify") && !muteList.contains(p)) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.hasPermission("gitsync.notify") && !muteList.contains(p)) {
                 p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 2f);
                 p.sendMessage(getString("commit-header"));
                 p.sendMessage(getString("commit-name").replace("%name%", pusher));
                 p.sendMessage(getString("commit-message").replace("%message%", mess));
                 p.spigot().sendMessage(tc2);
-                if(auto) {
+                if (auto) {
                     p.sendMessage(getString("commit-auto").replace("%command%", command));
-                }
-                else {
+                } else {
                     p.spigot().sendMessage(tc);
                     ready = true;
                 }

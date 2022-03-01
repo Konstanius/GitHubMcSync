@@ -9,13 +9,14 @@ import org.json.JSONObject;
 import java.util.Arrays;
 
 import static konstanius.gitmcsync.EventCommit.eventCommit;
-import static konstanius.gitmcsync.GitMcSync.*;
+import static konstanius.gitmcsync.GitMcSync.getString;
+import static konstanius.gitmcsync.GitMcSync.ready;
 
 public class CommandGitPull implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(!sender.hasPermission("gitsync.pull")) {
+        if (!sender.hasPermission("gitsync.pull")) {
             sender.sendMessage(getString("permission-denied"));
             return true;
         }
@@ -31,13 +32,11 @@ public class CommandGitPull implements CommandExecutor {
                 "}");
         ready = true;
         eventCommit(json);
-        if(args.length > 0 && Arrays.asList(args).contains("-ai") && Arrays.asList(args).contains("-r")) {
+        if (args.length > 0 && Arrays.asList(args).contains("-ai") && Arrays.asList(args).contains("-r")) {
             sender.getServer().dispatchCommand(sender, "gitmerge " + getString("repository-url") + " -r");
-        }
-        else if(args.length > 0 && Arrays.asList(args).contains("-ai") && Arrays.asList(args).contains("-s")) {
+        } else if (args.length > 0 && Arrays.asList(args).contains("-ai") && Arrays.asList(args).contains("-s")) {
             sender.getServer().dispatchCommand(sender, "gitmerge " + getString("repository-url") + " -s");
-        }
-        else if(args.length > 0 && Arrays.asList(args).contains("-ai")) {
+        } else if (args.length > 0 && Arrays.asList(args).contains("-ai")) {
             sender.getServer().dispatchCommand(sender, "gitmerge " + getString("repository-url"));
         }
         return true;
