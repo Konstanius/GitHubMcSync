@@ -82,6 +82,10 @@ Flags:
 - -b - Reload the plugin using BileTools
 - none - Use the plugin internal reload command (`/plugin reload`) if it exists
 
+### `/gitclean`
+Delete all local GitMcSync cache files, directories and temporary repositories.
+Useful to delete files on the remote repository without deleting them on the server if commits have been made after exporting and before deletion of data files.
+
 ### `/gitmute`
 Toggles the visibility of push detects in chat.  
 Is not persistent through a reload / restart of the plugin.
