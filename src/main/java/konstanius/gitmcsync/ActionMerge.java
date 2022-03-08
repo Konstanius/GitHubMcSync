@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static konstanius.gitmcsync.GitMcSync.*;
+import static org.bukkit.Bukkit.getServer;
 
 public class ActionMerge {
     public static void mergeReloads(Plugin plugin, CommandSender sender) {

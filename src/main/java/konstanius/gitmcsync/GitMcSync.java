@@ -11,19 +11,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.security.MessageDigest;
+import java.sql.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static java.lang.System.out;
 import static konstanius.gitmcsync.EventCommit.eventCommit;
 
 public final class GitMcSync extends JavaPlugin {
+    public static String license;
     public static FileConfiguration config;
     public static Logger logger = Bukkit.getLogger();
     public static HttpServer webServer;
@@ -39,6 +42,16 @@ public final class GitMcSync extends JavaPlugin {
         saveDefaultConfig();
         config = getConfig();
         plugin = this;
+        license = getString("license");
+        try {
+            if(!verifyLicense()) {
+                log("Plugin license is invalid. Please contact Konstanius#3698 / eukonstanius@gmail.com to purchase a license.");
+                getServer().getPluginManager().disablePlugin(this);
+            }
+        } catch (IOException e) {
+            log("Plugin license is invalid. Please contact Konstanius#3698 / eukonstanius@gmail.com to purchase a license.");
+            getServer().getPluginManager().disablePlugin(this);
+        }
 
         try {
             URL whatismyip = new URL("http://checkip.amazonaws.com");
@@ -58,12 +71,12 @@ public final class GitMcSync extends JavaPlugin {
         } catch (Exception ignored) {
         }
 
-        getCommand("gitmerge").setExecutor(new CommandGitMerge());
-        getCommand("gitpull").setExecutor(new CommandGitPull());
-        getCommand("gitupgrade").setExecutor(new CommandGitUpgrade());
-        getCommand("gitmute").setExecutor(new CommandGitMute());
-        getCommand("gitexport").setExecutor(new CommandGitExport());
-        getCommand("gitclean").setExecutor(new CommandGitClean());
+        getCommand("gitmerge").setExecutor(new CommandGitMerge(this));
+        getCommand("gitpull").setExecutor(new CommandGitPull(this));
+        getCommand("gitupgrade").setExecutor(new CommandGitUpgrade(this));
+        getCommand("gitmute").setExecutor(new CommandGitMute(this));
+        getCommand("gitexport").setExecutor(new CommandGitExport(this));
+        getCommand("gitclean").setExecutor(new CommandGitClean(this));
 
         try {
             webServer = HttpServer.create(new InetSocketAddress(Integer.parseInt(getString("webhook-port"))), 0);
@@ -106,5 +119,58 @@ public final class GitMcSync extends JavaPlugin {
 
     public static void log(String l) {
         logger.log(Level.INFO, "§2§l" + l);
+    }
+
+    public static boolean verifyLicense() throws IOException {
+        try {
+            MessageDigest md = null;
+            try {
+                md = MessageDigest.getInstance("SHA-512");
+            } catch (Exception e) {
+                return false;
+            }
+            byte[] messageDigest = md.digest(license.getBytes());
+            BigInteger no = new BigInteger(1, messageDigest);
+            String licenseHash = no.toString(16);
+            while (licenseHash.length() < 32) {
+                licenseHash = "0" + licenseHash;
+            }
+            out.println(licenseHash);
+            URL gitURL = new URL("https://raw.githubusercontent.com/Konstanius/Konstanius/main/GitMcSync-Hashes.txt");
+            BufferedReader in = new BufferedReader(new InputStreamReader(gitURL.openStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                if(inputLine.equals(licenseHash)) {
+                    in.close();
+                    Class.forName("com.mysql.jdbc.Driver");
+                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+                    long timeNow = cal.getTimeInMillis();
+                    Connection newConnection = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/4eECDcb5Lx", "4eECDcb5Lx", "vXD3rnQxa4");
+                    Statement statement = newConnection.createStatement();
+                    ResultSet result = statement.executeQuery("SELECT * FROM Licensing WHERE Hash = '" + licenseHash + "';");
+                    String ip = new BufferedReader(new InputStreamReader(new URL("http://checkip.amazonaws.com").openStream())).readLine();
+                    long time = 0;
+                    String recentIP = "";
+                    while(result.next()) {
+                        if(result.getLong("Time") > time) {
+                            time = result.getLong("Time");
+                            recentIP = result.getString("IP");
+                        }
+                    }
+                    if(recentIP.equals(ip) || time <= timeNow - 3600000) {
+                        statement.executeUpdate("INSERT INTO Licensing (Hash, IP, Time) VALUES ('" + licenseHash + "','" + ip + "','" + timeNow + "');");
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+            in.close();
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

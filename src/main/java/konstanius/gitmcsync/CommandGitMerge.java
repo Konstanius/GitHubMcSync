@@ -14,6 +14,7 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -21,11 +22,27 @@ import java.util.Arrays;
 import static konstanius.gitmcsync.ActionMerge.mergeFiles;
 import static konstanius.gitmcsync.ActionMerge.mergeReloads;
 import static konstanius.gitmcsync.GitMcSync.*;
+import static org.bukkit.Bukkit.getServer;
 
 public class CommandGitMerge implements CommandExecutor {
+    private final Plugin plugin;
+
+    public CommandGitMerge(GitMcSync gitMcSync) {
+        plugin = gitMcSync;
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        try {
+            if(!verifyLicense()) {
+                log("Plugin license is invalid. Please contact Konstanius#3698 / eukonstanius@gmail.com to purchase a license.");
+                getServer().getPluginManager().disablePlugin(plugin);
+            }
+        } catch (IOException e) {
+            log("Plugin license is invalid. Please contact Konstanius#3698 / eukonstanius@gmail.com to purchase a license.");
+            getServer().getPluginManager().disablePlugin(plugin);
+        }
+
         if (!sender.hasPermission("gitsync.merge")) {
             sender.sendMessage(getString("permission-denied"));
             return true;
