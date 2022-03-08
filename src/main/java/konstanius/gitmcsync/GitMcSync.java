@@ -22,7 +22,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.lang.System.out;
 import static konstanius.gitmcsync.EventCommit.eventCommit;
 
 public final class GitMcSync extends JavaPlugin {
@@ -118,7 +117,7 @@ public final class GitMcSync extends JavaPlugin {
     }
 
     public static void log(String l) {
-        logger.log(Level.INFO, "§2§l" + l);
+        logger.log(Level.INFO, "§2§l" + l + "§r");
     }
 
     public static boolean verifyLicense() throws IOException {
@@ -135,7 +134,6 @@ public final class GitMcSync extends JavaPlugin {
             while (licenseHash.length() < 32) {
                 licenseHash = "0" + licenseHash;
             }
-            out.println(licenseHash);
             URL gitURL = new URL("https://raw.githubusercontent.com/Konstanius/Konstanius/main/GitMcSync-Hashes.txt");
             BufferedReader in = new BufferedReader(new InputStreamReader(gitURL.openStream()));
             String inputLine;
