@@ -2,7 +2,7 @@
 
 ## Features
 
-- Manual and fully automatic import / export of files to and from the GitHub repository
+- Manual and fully automatic import / export of files and plugins to and from the GitHub repository
 - Listening for changes on the repository
 - One click commit pushing and installation via client IDE
 
