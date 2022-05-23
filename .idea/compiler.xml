@@ -13,4 +13,9 @@
       <module name="GitHubMcSync" target="11" />
     </bytecodeTargetLevel>
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="GitHubMcSync" options="--add-modules java.base,java.logging,java.sql" />
+    </option>
+  </component>
 </project>

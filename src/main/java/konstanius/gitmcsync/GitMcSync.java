@@ -41,16 +41,16 @@ public final class GitMcSync extends JavaPlugin {
         saveDefaultConfig();
         config = getConfig();
         plugin = this;
-        license = getString("license");
-        try {
-            if(!verifyLicense()) {
-                log("Plugin license is invalid. Please contact Konstanius#3698 / eukonstanius@gmail.com to purchase a license.");
-                getServer().getPluginManager().disablePlugin(this);
-            }
-        } catch (IOException e) {
-            log("Plugin license is invalid. Please contact Konstanius#3698 / eukonstanius@gmail.com to purchase a license.");
-            getServer().getPluginManager().disablePlugin(this);
-        }
+//        license = getString("license");
+//        try {
+//            if(!verifyLicense()) {
+//                log("Plugin license is invalid. Please contact Konstanius#3698 / eukonstanius@gmail.com to purchase a license.");
+//                getServer().getPluginManager().disablePlugin(this);
+//            }
+//        } catch (IOException e) {
+//            log("Plugin license is invalid. Please contact Konstanius#3698 / eukonstanius@gmail.com to purchase a license.");
+//            getServer().getPluginManager().disablePlugin(this);
+//        }
 
         try {
             URL whatismyip = new URL("http://checkip.amazonaws.com");
@@ -121,54 +121,55 @@ public final class GitMcSync extends JavaPlugin {
     }
 
     public static boolean verifyLicense() throws IOException {
-        try {
-            MessageDigest md = null;
-            try {
-                md = MessageDigest.getInstance("SHA-512");
-            } catch (Exception e) {
-                return false;
-            }
-            byte[] messageDigest = md.digest(license.getBytes());
-            BigInteger no = new BigInteger(1, messageDigest);
-            String licenseHash = no.toString(16);
-            while (licenseHash.length() < 32) {
-                licenseHash = "0" + licenseHash;
-            }
-            URL gitURL = new URL("https://raw.githubusercontent.com/Konstanius/Konstanius/main/GitMcSync-Hashes.txt");
-            BufferedReader in = new BufferedReader(new InputStreamReader(gitURL.openStream()));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                if(inputLine.equals(licenseHash)) {
-                    in.close();
-                    Class.forName("com.mysql.jdbc.Driver");
-                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-                    long timeNow = cal.getTimeInMillis();
-                    Connection newConnection = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/4eECDcb5Lx", "4eECDcb5Lx", "vXD3rnQxa4");
-                    Statement statement = newConnection.createStatement();
-                    ResultSet result = statement.executeQuery("SELECT * FROM Licensing WHERE Hash = '" + licenseHash + "';");
-                    String ip = new BufferedReader(new InputStreamReader(new URL("http://checkip.amazonaws.com").openStream())).readLine();
-                    long time = 0;
-                    String recentIP = "";
-                    while(result.next()) {
-                        if(result.getLong("Time") > time) {
-                            time = result.getLong("Time");
-                            recentIP = result.getString("IP");
-                        }
-                    }
-                    if(recentIP.equals(ip) || time <= timeNow - 3600000) {
-                        statement.executeUpdate("INSERT INTO Licensing (Hash, IP, Time) VALUES ('" + licenseHash + "','" + ip + "','" + timeNow + "');");
-                        return true;
-                    }
-                    else {
-                        return false;
-                    }
-                }
-            }
-            in.close();
-            return false;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return true;
+//        try {
+//            MessageDigest md = null;
+//            try {
+//                md = MessageDigest.getInstance("SHA-512");
+//            } catch (Exception e) {
+//                return false;
+//            }
+//            byte[] messageDigest = md.digest(license.getBytes());
+//            BigInteger no = new BigInteger(1, messageDigest);
+//            String licenseHash = no.toString(16);
+//            while (licenseHash.length() < 32) {
+//                licenseHash = "0" + licenseHash;
+//            }
+//            URL gitURL = new URL("https://raw.githubusercontent.com/Konstanius/Konstanius/main/GitMcSync-Hashes.txt");
+//            BufferedReader in = new BufferedReader(new InputStreamReader(gitURL.openStream()));
+//            String inputLine;
+//            while ((inputLine = in.readLine()) != null) {
+//                if(inputLine.equals(licenseHash)) {
+//                    in.close();
+//                    Class.forName("com.mysql.jdbc.Driver");
+//                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+//                    long timeNow = cal.getTimeInMillis();
+//                    Connection newConnection = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/4eECDcb5Lx", "4eECDcb5Lx", "vXD3rnQxa4");
+//                    Statement statement = newConnection.createStatement();
+//                    ResultSet result = statement.executeQuery("SELECT * FROM Licensing WHERE Hash = '" + licenseHash + "';");
+//                    String ip = new BufferedReader(new InputStreamReader(new URL("http://checkip.amazonaws.com").openStream())).readLine();
+//                    long time = 0;
+//                    String recentIP = "";
+//                    while(result.next()) {
+//                        if(result.getLong("Time") > time) {
+//                            time = result.getLong("Time");
+//                            recentIP = result.getString("IP");
+//                        }
+//                    }
+//                    if(recentIP.equals(ip) || time <= timeNow - 3600000) {
+//                        statement.executeUpdate("INSERT INTO Licensing (Hash, IP, Time) VALUES ('" + licenseHash + "','" + ip + "','" + timeNow + "');");
+//                        return true;
+//                    }
+//                    else {
+//                        return false;
+//                    }
+//                }
+//            }
+//            in.close();
+//            return false;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
     }
 }
