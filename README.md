@@ -13,6 +13,24 @@
 - Automatic archiving and code changelog generation
 - Faster testing of config changes via One-Click configuration pushes
 
+### Installation
+- Move the plugin to your server's plugins folder and restart the server
+- Create a public or private GitHub repository and copy its link to the config "repository-url" (e.g.: https://github.com/Konstanius/GitHubMcSync)
+- If the repository is private, generate an account access token (https://github.com/settings/tokens) and paste it into the config under "token", then set "authenticate" to true
+- Restart the server and you're good to go
+
+**Enabling automatic features**
+- To enable automatic commit and push detection, you will have to create a webhook on the repository and listen to it on the minecraft server
+- First, open a port on your server and change the config "webhook-port" to that port
+- Create a webhook on your linked GitHub repository (/settings/webhooks) 
+  - Add webhook 
+  - Specify the payloud url to be "http://<your server ip>:<your webhook port>/webhook"
+  - Set content type to be "application/json"
+  - Leave Secret blank
+  - Set events to listen to "Just the push event"
+  - Add webhook
+- The repository will now be linked abd you can test it with the steps in Getting started
+
 ### Getting started
 
 **Requirements:**
