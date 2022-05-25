@@ -24,7 +24,7 @@
 - First, open a port on your server and change the config "webhook-port" to that port
 - Create a webhook on your linked GitHub repository (/settings/webhooks) 
   - Add webhook 
-  - Specify the payloud url to be "http://<your server ip>:<your webhook port>/webhook"
+  - Specify the payloud url to be "http://(your server ip):(your webhook port)/webhook"
   - Set content type to be "application/json"
   - Leave Secret blank
   - Set events to listen to "Just the push event"
