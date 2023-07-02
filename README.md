@@ -1,4 +1,8 @@
-# Custom Project: GitMcSync
+# DEPRECATION NOTICE
+## This project is deprecated and has been replaced by the far more superior MineCICD at https://github.com/Konstanius/MineCICD. This project will now be archived.
+
+
+#Custom Project: GitMcSync
 
 ## Features
 
